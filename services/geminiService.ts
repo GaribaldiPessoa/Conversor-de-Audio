@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Modality } from "@google/genai";
 
 const API_KEY = process.env.API_KEY;
 
@@ -65,5 +65,34 @@ export async function transcribeCombinedAudio(audios: { base64: string, mimeType
   } catch (error) {
     console.error("Error in Gemini API call (combined audio):", error);
     throw new Error("Falha na transcrição dos áudios combinados. Verifique o console para mais detalhes.");
+  }
+}
+
+/**
+ * Gera áudio a partir de texto usando o modelo TTS do Gemini.
+ */
+export async function generateSpeech(text: string, voiceName: string): Promise<string> {
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash-preview-tts",
+      contents: [{ parts: [{ text }] }],
+      config: {
+        responseModalities: [Modality.AUDIO],
+        speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: { voiceName },
+            },
+        },
+      },
+    });
+
+    const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+    if (!base64Audio) {
+        throw new Error("A API não retornou dados de áudio.");
+    }
+    return base64Audio;
+  } catch (error) {
+    console.error("Error in Gemini API call (generate speech):", error);
+    throw new Error("Falha na geração de áudio. Verifique o console para mais detalhes.");
   }
 }
