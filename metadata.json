@@ -1,0 +1,7 @@
+{
+  "name": "Conversor de Áudio para Texto",
+  "description": "Uma aplicação web para converter áudio em texto usando a API Gemini. Grave áudio diretamente do seu microfone ou envie um arquivo de áudio para obter uma transcrição precisa.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
